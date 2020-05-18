@@ -1,4 +1,4 @@
-## Demo of custom conversion of IContent for EPiServer ContentDeliveryAPI
+## Demo of custom trasnformation of IContent for EPiServer ContentDeliveryAPI
 
 This project shows how the EPiServer ContentDeliveryAPI can be customized to easily add new properties to ContentApiModels before they are sent to the client. It is a minimum demo with only the required classes to make it work, plus a few converters to show how to use it.
 
@@ -9,18 +9,16 @@ It uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial
 ---
 
 ## Notable files
-There are five pieces to this. I'll describe each file in turn. The code itself also contain quite a bit of comments and some code is more expanded than it need be to make it more readable.
 
-* [IContentModelConverter](/DemoCustomModelConverters.Models/IContentModelConverter.cs)
-identifies the converters to be discovered during startup. **It is very important that this interface is in another project in the solution than the converters, else the assembly scanning won't work.** I'm not entirely sure of the reason, but it seems to be due to different Type.Module.FullyQualifiedAssemblyName. If you have a better explanation, please do tell.
+* [IContentModelConverter](/DemoCustomModelConverters.Models/IContentModelConverter.cs) : identifies the converters to be discovered during startup. **It is very important that this interface is in another project in the solution than the converters, else the assembly scanning won't work.** I'm not entirely sure of the reason, but it seems to be due to different Type.Module.FullyQualifiedAssemblyName. If you have a better explanation, please do tell.
 
-* [ExtendedContentModelMapper.cs](/DemoCustomModelConverters/ContentApi/ExtendedContentModelMapper.cs). Intercepts the IContent transformation. File is mostly as in EPiServer's own Music Festival demo.
+* [ExtendedContentModelMapper.cs](/DemoCustomModelConverters/ContentApi/ExtendedContentModelMapper.cs) : Intercepts the IContent transformation. File is mostly as in EPiServer's own Music Festival demo.
 
-* [BasePageConverter](/DemoCustomModelConverters/ContentApi/Converters/BasePageConverter.cs) (and the other converters) Handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties.
+* [BasePageConverter](/DemoCustomModelConverters/ContentApi/Converters/BasePageConverter.cs) (and the other converters) : Handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties.
 
-* [ContentApiInitializationModule.cs](/DemoCustomModelConverters/Infrastructure/Initialization/ContentApiInitializationModule.cs). Registers the `ExtendedContentModelMapper.cs` and starts the scan for converters.
+* [ContentApiInitializationModule.cs](/DemoCustomModelConverters/Infrastructure/Initialization/ContentApiInitializationModule.cs) : Registers the `ExtendedContentModelMapper.cs` and starts the scan for converters.
 
-* [ModelConverterLoader.cs](/DemoCustomModelConverters/ContentApi/ModelConverterLoader.cs). Scans the assembly for converters.
+* [ModelConverterLoader.cs](/DemoCustomModelConverters/ContentApi/ModelConverterLoader.cs) : Scans the assembly for converters.
 
 ---
 
