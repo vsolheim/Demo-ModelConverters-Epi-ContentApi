@@ -6,8 +6,10 @@ This demo should work and be good to go as is, but I naturally can't guarantee i
 
 This code uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial transformation from IContent to the ContentApiModel, therefore requiring essentially zero maintenance, then adds some code to add additional properties. The code scans the assemblies for any file implementing the required interface, eliminating the need to register them. Since pages, blocks and media files all implement IContent, you can add properties to all of them.
 
-## Requirements
-There are five important pieces. I'll describe each file in turn. The code itself also contain quite a bit of comments and some code is more expanded than it need be to make it more readable.
+---
+
+## The code
+There are five pieces to this. I'll describe each file in turn. The code itself also contain quite a bit of comments and some code is more expanded than it need be to make it more readable.
 
 ### IContentModelConverter
 This identifies the converters so that they are discovered during startup. This contains the two methods any converter must implement in other to work. What they do is explained later. 
