@@ -1,4 +1,5 @@
 ﻿using System;
+using DemoCustomModelConverters.Models;
 using DemoCustomModelConverters.Models.Baseclasses;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.ContentApi.Core.Serialization.Models;
@@ -12,7 +13,11 @@ namespace DemoCustomModelConverters.ContentApi.Converters
 
         public ContentApiModel TransformContent(IContentModelMapper defaultContentModelMapper, IContent content, bool excludePersonalizedContent = false, string expand = "")
         {
-            return defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
+            var model = defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
+
+            // Add any additional properties here.
+            model.Properties.Add("Some key", "Some data that all blocks should have");
+            return model;
         }
     }
 }

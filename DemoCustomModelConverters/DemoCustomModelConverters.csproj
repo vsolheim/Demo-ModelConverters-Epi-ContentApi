@@ -248,7 +248,6 @@
     <Compile Include="ContentApi\Converters\StartPageConverter.cs" />
     <Compile Include="ContentApi\Converters\TextBlockConverter.cs" />
     <Compile Include="ContentApi\ExtendedContentModelMapper.cs" />
-    <Compile Include="ContentApi\IContentModelConverter.cs" />
     <Compile Include="ContentApi\ModelConverterLoader.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -292,6 +291,12 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DemoCustomModelConverters.Models\DemoCustomModelConverters.Models.csproj">
+      <Project>{86504d4b-15c1-44f1-8e1f-d029db25cc75}</Project>
+      <Name>DemoCustomModelConverters.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>

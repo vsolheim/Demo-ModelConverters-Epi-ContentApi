@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Castle.Core.Internal;
+using DemoCustomModelConverters.Models;
+using EPiServer.Web.WebControls;
 
 namespace DemoCustomModelConverters.ContentApi
 {
@@ -25,18 +28,12 @@ namespace DemoCustomModelConverters.ContentApi
         {
             var foundConverter = Converters.TryGetValue(fullname, out var converter);
 
-            if (foundConverter)
-            {
-                return converter;
-            }
-
-            return null;
+            return foundConverter ? converter : null;
         }
 
 
         /// <summary>
         /// Scan the assembly for classes inheriting IContentModelConverter.
-        /// Uses code to load the assembly borrowed from here: https://www.codeproject.com/Tips/836907/Loading-Assembly-to-Leave-Assembly-File-Unlocked
         /// </summary>
         public static void ScanForConverters()
         {
@@ -51,14 +48,12 @@ namespace DemoCustomModelConverters.ContentApi
                 foreach (var dll in dlls)
                 {
                     // Read .dll's from a bytestream from so they don't get locked by the IIS process. Else the solution can't be rebuilt without reseting the IIS process.
-                    // Code borrowed from alternative 1 here: https://www.codeproject.com/Tips/836907/Loading-Assembly-to-Leave-Assembly-File-Unlocked
                     var file = Assembly.Load(File.ReadAllBytes(dll));
 
-                    // Get only classes.
-                    var types = file.GetExportedTypes().Where(t => !t.IsInterface && !t.IsAbstract);
-
-                    //// Then filter down to only classes implementing the interface.
-                    var filteredTypes = types.Where(t => typeof(IContentModelConverter).IsAssignableFrom(t));
+                    // Get only classes that implement the interface.
+                    var filteredTypes = file.GetExportedTypes()
+                        .Where(t => !t.IsInterface && !t.IsAbstract)
+                        .Where(t => typeof(IContentModelConverter).IsAssignableFrom(t));
 
                     // Activate them. Necessary to later find out which pagetype they support. 
                     var activatedConverters = filteredTypes.Select(t => (IContentModelConverter)Activator.CreateInstance(t));

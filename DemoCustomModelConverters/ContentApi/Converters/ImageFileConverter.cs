@@ -1,4 +1,5 @@
 ﻿using System;
+using DemoCustomModelConverters.Models;
 using DemoCustomModelConverters.Models.Media;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.ContentApi.Core.Serialization.Models;
@@ -12,7 +13,10 @@ namespace DemoCustomModelConverters.ContentApi.Converters
 
         public ContentApiModel TransformContent(IContentModelMapper defaultContentModelMapper, IContent content, bool excludePersonalizedContent = false, string expand = "")
         {
+            // Because it calls the base.TransformContent(), all properties the baseclass adds will be available.
             return defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
+
+            // Add any additional properties here.
         }
     }
 }

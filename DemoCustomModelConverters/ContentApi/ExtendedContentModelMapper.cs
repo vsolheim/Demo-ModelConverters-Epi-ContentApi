@@ -14,8 +14,7 @@ using EPiServer.Web.Routing;
 namespace DemoCustomModelConverters.ContentApi
 {
     /// <summary>
-    /// A decorator for the DefaultContentModelMapper. We need this to extend the returned models with custom properties
-    /// like languages or parentUrl.
+    /// A decorator for the DefaultContentModelMapper. Need this to extend the returned models with custom properties.
     /// </summary>
     public class ExtendedContentModelMapper : IContentModelMapper
     {
@@ -45,7 +44,7 @@ namespace DemoCustomModelConverters.ContentApi
         public ContentApiModel TransformContent(IContent content, bool excludePersonalizedContent = false, string expand = "")
         {
             ContentApiModel contentModel;
-
+            
             // It's GetType().BaseType.FullName because the content comes here as proxies.
             // Can't compare the types because the types ModelConverterLoader has and the types from here, while technically being the same type, belong to different "versions" of the assembly and thus won't hit.
             // Therefore comparing the namespace is more reliable.
@@ -61,54 +60,19 @@ namespace DemoCustomModelConverters.ContentApi
                 contentModel = _defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
             }
 
-            //contentModel.Url = ResolveUrl(content.ContentLink, content.LanguageBranch());
             // Flatten the properties to make it more convenient to use. Meaning remove the propety types to remove an unnecessary layer in the JSON.
             contentModel.Properties = contentModel.Properties.Select(p => FlattenProperty(p)).ToDictionary(x => x.Key, x => x.Value);
+
 
             return contentModel;
         }
 
-
-        #region Private URL methods
-
-        private string ResolveUrl(ContentReference reference, string language)
-        {
-            return _urlResolver.GetUrl(reference, language, new UrlResolverArguments()
-            {
-                ContextMode = GetContextMode()
-            });
-        }
-
-        /// <summary>
-        /// The "epieditmode" querystring parameter is added to URLs by Episerver as a way to keep track of what context is currently active.
-        /// If there is no "epieditmode" parameter we're in regular view mode.
-        /// If the "epieditmode" parameter has value "True" we're in edit mode.
-        /// If the "epieditmode" parameter has value "False" we're in preview mode.
-        /// All of these different modes will resolve to different URLs for the same content.
-        /// </summary>
-        private ContextMode GetContextMode()
-        {
-            var httpContext = _httpContextAccessor();
-            if (httpContext?.Request?.QueryString[PageEditing.EpiEditMode] == null)
-            {
-                return ContextMode.Default;
-            }
-
-            if (bool.TryParse(httpContext.Request.QueryString[PageEditing.EpiEditMode], out bool editMode))
-            {
-                return editMode ? ContextMode.Edit : ContextMode.Preview;
-            }
-            return ContextMode.Undefined;
-        }
-
-        #endregion
-
-
-        #region Private flattening methods. Currently not used.
+        
+        #region Private flattening methods.
         /// <summary>
         /// Flattens the property, i.e. mostly just removing the object layer and returning only the value.
-        /// Example: instead of "title": { "value": "Startpage title", "propertyDataType": "PropertyLongString" }
-        /// It just makes it "title": "Startpage Title"
+        /// Example: instead of "title": { "value": "Startpage title", "propertyDataType": "PropertyLongString" },
+        /// it just makes it "title": "Startpage Title"
         /// </summary>
         /// <param name="property"></param>
         /// <returns></returns>
@@ -125,8 +89,7 @@ namespace DemoCustomModelConverters.ContentApi
             switch (propertyValue)
             {
                 case ContentAreaPropertyModel contentAreaModel:
-                    return contentAreaModel?.ExpandedValue?.Select(p => p);
-                    //return contentAreaModel?.ExpandedValue?.Select(p => ConvertContentAreaItem(p, contentAreaModel));
+                    return contentAreaModel?.ExpandedValue?.Select(p => ConvertContentAreaItem(p, contentAreaModel));
                 case PropertyModel<string, PropertyString> stringModel:
                     return stringModel.Value;
                 case PropertyModel<string, PropertyUrl> urlModel:
