@@ -1,10 +1,10 @@
 ## Demo of custom conversion of IContent for EPiServer ContentDeliveryAPI
 
-This project shows how the EPiServer ContentDeliveryAPI can be customized to easily add new properties to ContentApiModels before they are sent to the client. It is a minimum demo with only the required classes to make it work, plus some converters to show how to use it.
+This project shows how the EPiServer ContentDeliveryAPI can be customized to easily add new properties to ContentApiModels before they are sent to the client. It is a minimum demo with only the required classes to make it work, plus a few converters to show how to use it.
 
-I've tested this version briefly and it should work and be good to go as is, but I naturally can't guarantee it is without issues. If you discover any, please tell me and I'll update the code.
+This demo should work and be good to go as is, but I naturally can't guarantee it is without issues. If you discover any, please tell me and I'll update the code.
 
-This code uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial transformation from IContent to the ContentApiModel, therefore requiring essentially zero maintenance, then adds the possibility to easily add additional properties to the model before it is sent to the client. The code scans the assemblies for any file implementing the necessary interface, eliminating the need to register them. 
+This code uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial transformation from IContent to the ContentApiModel, therefore requiring essentially zero maintenance, then adds some code to add additional properties. The code scans the assemblies for any file implementing the required interface, eliminating the need to register them. Since pages, blocks and media files all implement IContent, you can add properties to all of them.
 
 ## Requirements
 There are five important pieces. I'll describe each file in turn. The code itself also contain quite a bit of comments and some code is more expanded than it need be to make it more readable.
@@ -27,11 +27,7 @@ public ContentApiModel TransformContent(IContent content, bool excludePersonaliz
     ContentApiModel contentModel;
 
     // It's GetType().BaseType.FullName because the content comes here as proxies.
-    // Can't compare the types because the types ModelConverterLoader has and the types from here, while technically being the same type, belong to different "versions" of the assembly and thus won't hit.
-    // Therefore comparing the namespace is more reliable.
     var converter = ModelConverterLoader.GetConverter(content.GetType().BaseType.FullName);
-
-    // If it has a converter, use that converter. Else use the default.
     if (converter != null)
     {
         contentModel = converter.TransformContent(_defaultContentModelMapper, content, excludePersonalizedContent, expand);
@@ -45,7 +41,7 @@ public ContentApiModel TransformContent(IContent content, bool excludePersonaliz
 ```
 
 ### BasePageConverter
-This handles the actual transformation. The `HandlesType()` method tells which type of IContent the converter supports. `ModelConverterLoader.cs` uses this to decide which converter to use. `TransformContent()` naturally handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties. In this base-converter you could add properties all pages should have.
+Handles the actual transformation. The `HandlesType()` method tells which type of IContent the converter supports. `ModelConverterLoader.cs` uses this to decide which converter to use. `TransformContent()` naturally handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties.
 ``` C#
 public class BasePageConverter : IContentModelConverter
     {
@@ -55,22 +51,19 @@ public class BasePageConverter : IContentModelConverter
         {
             var model = defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
 
-            // Add any additional properties here.
-            // This could for example be a footer.
             model.Properties.Add("Footer", "Some footer data");
             return model;
         }
     }
 ```
 
-The converters support an optional hierarchy to use the properties of the ancestor converters. This is from the `StartPageConverter.cs` which inherits the `BasePageConverter.cs`. Here it calls base.TransformContent to handle the initial transformation and adding properties, then `StartPageConverter `adds its own properties. 
+The converters have an optional hierarchy to use the properties of the ancestor converters. This `StartPageConverter.cs` inherits the `BasePageConverter.cs`. It calls base.TransformContent to handle the initial transformation and added properties, then `StartPageConverter` adds its own properties. 
 ``` C#
 public new ContentApiModel TransformContent(IContentModelMapper defaultContentModelMapper, IContent content, bool excludePersonalizedContent = false, string expand = "")
         {
             // Because it calls the base.TransformContent(), all properties the baseclass adds will be available.
             var model = base.TransformContent(defaultContentModelMapper, content, excludePersonalizedContent, expand);
 
-            // Add any additional properties here, or adjust what the baseclass has added.
             model.Properties.Add("Some key", "Som startpage-specific data");
 
             return model;
@@ -83,18 +76,14 @@ var model = defaultContentModelMapper.TransformContent(content, excludePersonali
 ```
 
 ### ContentApiInitializationModule.cs 
-This registers the ExtendedContentModelMapper and starts the scan for ContentModelConverters, 
-``` C#
-public class ContentApiInitializationModule : IConfigurableModule
-    {
-        public void ConfigureContainer(ServiceConfigurationContext context)
-        {
-            // Scan for all classes implementing IContentModelConverter. I.e. being able to convert IContent for ContentAPI.
-            ModelConverterLoader.ScanForConverters();
-        }
-```
+This registers the ExtendedContentModelMapper and starts the scan for ContentModelConverters 
+`ModelConverterLoader.ScanForConverters();` 
+
 
 ### ModelConverterLoader.cs
-This is where the magic of discovering the converters happen. At startup - since `ScanForConverters()` is called in the InitializationModule - it scans all .dll-files for any classes implementing `IContentModelConverter`. The code is a bit longer than is convenient in the README, so just check it out in  `/ContentApi/ModelConverterLoader.cs`.
+This is where the magic of discovering the converters happen. At startup it scans all .dll-files for any classes implementing `IContentModelConverter`. The code is a bit longer than is convenient in the README, so just check it out in  `/ContentApi/ModelConverterLoader.cs`.
 
 In short. `GetConverter()` returns the correct converter for a given IContent. It returns only exact hits; giving it `StartPage.GetType().FullName` will not return the `BasePageConverter`. `ScanForConverters()` scans the assembly for any converters. 
+
+
+This project is licensed under the terms of the MIT license.
