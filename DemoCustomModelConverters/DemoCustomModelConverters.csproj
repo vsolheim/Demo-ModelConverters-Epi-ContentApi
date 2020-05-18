@@ -253,8 +253,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Initialization\ContentApiInitializationModule.cs" />
-    <Compile Include="Infrastructure\Initialization\InitializationModule.cs" />
-    <Compile Include="Infrastructure\Initialization\StructureMapDependencyResolver.cs" />
     <Compile Include="Models\Baseclasses\BaseBlock.cs" />
     <Compile Include="Models\Baseclasses\BasePage.cs" />
     <Compile Include="Models\Baseclasses\BasePageViewModel.cs" />
