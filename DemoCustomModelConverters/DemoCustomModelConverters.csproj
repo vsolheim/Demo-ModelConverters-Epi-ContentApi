@@ -260,8 +260,6 @@
     <Compile Include="Models\Media\ImageFile.cs" />
     <Compile Include="Models\Pages\Article\ArticlePage.cs" />
     <Compile Include="Models\Pages\Start\StartPage.cs" />
-    <Compile Include="Models\Pages\Start\StartPageController.cs" />
-    <Compile Include="Models\Pages\Start\StartPageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -269,7 +267,6 @@
     <Folder Include="Static\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Web.config" />
     <Content Include="Global.asax" />
     <Content Include="Web.config" />
     <Content Include="App_Data\GeoLiteCity.dat" />
@@ -281,8 +278,6 @@
     <Content Include="modules\_protected\CMS\web.config" />
     <Content Include="modules\_protected\CMS\CMS.zip" />
     <None Include="packages.config" />
-    <Content Include="Views\PageViews\StartPage.cshtml" />
-    <Content Include="Views\Shared\_layout.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
