@@ -17,7 +17,7 @@ namespace DemoCustomModelConverters.ContentApi
         /// <summary>
         /// List of all converters. The key is Type.FullName. For a regular page that means page.GetType().FullName.
         /// </summary>
-        public static Dictionary<string, IContentModelConverter> Converters { get; set; } = new Dictionary<string, IContentModelConverter>();
+        private static Dictionary<string, IContentModelConverter> Converters { get; set; } = new Dictionary<string, IContentModelConverter>();
 
         /// <summary>
         /// Get the correct converter for the <paramref name="fullname"/> pagetype. Returns null if there is no converter for it.

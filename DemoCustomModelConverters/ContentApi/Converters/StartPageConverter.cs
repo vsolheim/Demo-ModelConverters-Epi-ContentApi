@@ -16,6 +16,9 @@ namespace DemoCustomModelConverters.ContentApi.Converters
             // Because it calls the base.TransformContent(), all properties the baseclass adds will be available.
             var model = base.TransformContent(defaultContentModelMapper, content, excludePersonalizedContent, expand);
 
+            // If you don't want the properties from BasePageConverter, just remove the line above and do the default transformation here.
+            //var model = defaultContentModelMapper.TransformContent(content, excludePersonalizedContent, expand);
+
             // Add any additional properties here, or adjust what the baseclass has added.
             model.Properties.Add("Some key", "Som startpage-specific data");
 
