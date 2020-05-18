@@ -4,7 +4,7 @@ This project shows how the EPiServer ContentDeliveryAPI can be customized to eas
 
 This demo should work and be good to go as is, but I naturally can't guarantee it is without issues. If you discover any, please tell me and I'll update the code.
 
-This code uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial transformation from IContent to the ContentApiModel, therefore requiring essentially zero maintenance, then adds some code to add additional properties. The code scans the assemblies for any file implementing the required interface, eliminating the need to register them. Since pages, blocks and media files all implement IContent, you can add properties to all of them.
+It uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial transformation from IContent to the ContentApiModel, therefore requiring essentially zero maintenance, then adds some code to add additional properties. It scans the assemblies for any file implementing the required interface, eliminating the need to register them. Since pages, blocks and media files all implement IContent, you can add properties to all of them.
 
 ---
 
@@ -16,7 +16,7 @@ identifies the converters to be discovered during startup. **It is very importan
 
 * [ExtendedContentModelMapper.cs](/DemoCustomModelConverters/ContentApi/ExtendedContentModelMapper.cs). Intercepts the IContent transformation. File is mostly as in EPiServer's own Music Festival demo.
 
-* [BasePageConverter](/DemoCustomModelConverters/ContentApi/Converters/BasePageConverter.cs). Handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties.
+* [BasePageConverter](/DemoCustomModelConverters/ContentApi/Converters/BasePageConverter.cs) (and the other converters) Handles the transformation. It first uses EPiServer's own mapper, then leaves you free to add additional properties.
 
 * [ContentApiInitializationModule.cs](/DemoCustomModelConverters/Infrastructure/Initialization/ContentApiInitializationModule.cs). Registers the `ExtendedContentModelMapper.cs` and starts the scan for converters.
 
