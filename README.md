@@ -1,4 +1,4 @@
-## Demo of custom trasnformation of IContent for EPiServer ContentDeliveryAPI
+## Demo of custom transformation of IContent for EPiServer ContentDeliveryAPI
 
 This project shows how the EPiServer ContentDeliveryAPI can be customized to easily add new properties to ContentApiModels before they are sent to the client. It is a minimum demo with only the required classes to make it work, plus a few converters to show how to use it.
 
