@@ -85,5 +85,6 @@ This is where the magic of discovering the converters happen. At startup it scan
 
 In short. `GetConverter()` returns the correct converter for a given IContent. It returns only exact hits; giving it `StartPage.GetType().FullName` will not return the `BasePageConverter`. `ScanForConverters()` scans the assembly for any converters. 
 
+---
 
 This project is licensed under the terms of the MIT license.
