@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Internal;
 using DemoCustomModelConverters.Models;
-using EPiServer.Web.WebControls;
 
 namespace DemoCustomModelConverters.ContentApi
 {

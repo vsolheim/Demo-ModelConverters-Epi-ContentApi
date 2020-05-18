@@ -5,10 +5,8 @@ using System.Web;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.ContentApi.Core.Serialization.Models;
 using EPiServer.Core;
-using EPiServer.Editor;
 using EPiServer.ServiceLocation;
 using EPiServer.SpecializedProperties;
-using EPiServer.Web;
 using EPiServer.Web.Routing;
 
 namespace DemoCustomModelConverters.ContentApi
