@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DemoCustomModelConverters.Infrastructure;
+using DemoCustomModelConverters.Infrastructure.Initialization;
 using DemoCustomModelConverters.Models;
+using EPiServer.Framework.Internal;
+using StructureMap;
 
 namespace DemoCustomModelConverters.ContentApi
 {
@@ -31,46 +35,29 @@ namespace DemoCustomModelConverters.ContentApi
 
 
         /// <summary>
-        /// Scan the assembly for classes inheriting IContentModelConverter.
+        /// Scan the assembly for classes implementing IContentModelConverter.
         /// </summary>
-        public static void ScanForConverters()
+        public static void ScanForConverters(IContainer container)
         {
-            IList<IContentModelConverter> converters = new List<IContentModelConverter>();
-
             try
             {
-                var executingAssembbly = Assembly.GetExecutingAssembly()?.GetName().CodeBase;
-                // Get only the DLLs. Retrieving the pdb- and xml-files will cause bad mojo (crashes). Substring(6) to cut away the file:/ prefix.
-                var dlls = Directory.EnumerateFiles(Path.GetDirectoryName(executingAssembbly).Substring(6), "*.dll");
-
-                foreach (var dll in dlls)
-                {
-                    // Read .dll's from a bytestream from so they don't get locked by the IIS process. Else the solution can't be rebuilt without reseting the IIS process.
-                    var file = Assembly.Load(File.ReadAllBytes(dll));
-
-                    // Get only classes that implement the interface.
-                    var filteredTypes = file.GetExportedTypes()
-                        .Where(t => !t.IsInterface && !t.IsAbstract)
-                        .Where(t => typeof(IContentModelConverter).IsAssignableFrom(t));
-
-                    // Activate them. Necessary to later find out which pagetype they support. 
-                    var activatedConverters = filteredTypes.Select(t => (IContentModelConverter)Activator.CreateInstance(t));
-                    foreach (var converter in activatedConverters)
+                container.Configure(c => c.Scan(s =>
                     {
-                        converters.Add(converter);
-                    }
-                }
+                        s.AssembliesFromApplicationBaseDirectory();
+                        s.AddAllTypesOf<IContentModelConverter>();
+                    }));
 
-                // Store the converters with the type.FullName of the type they handle as the key.
-                // Can't use the type as this type won't match the type of the pages in ExtendedContentModelMapper because they belong to "different" versions of the assembly.
+                var converters = container.GetAllInstances<IContentModelConverter>();
+
+
                 foreach (var converter in converters)
                 {
                     Converters.Add(converter.HandlesType.FullName, converter);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // TODO: Log this failure.
+                // TODO: Log this
             }
         }
     }

@@ -1,12 +1,18 @@
 ﻿using System.Web;
+using System.Web.Mvc;
 using DemoCustomModelConverters.ContentApi;
+using DemoCustomModelConverters.ContentApi.Converters;
+using DemoCustomModelConverters.Models;
 using EPiServer.ContentApi.Cms;
 using EPiServer.ContentApi.Core.Configuration;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.Framework;
 using EPiServer.Framework.Initialization;
 using EPiServer.ServiceLocation;
+using EPiServer.ServiceLocation.Internal;
 using EPiServer.Web.Routing;
+using StructureMap;
+using StructureMap.Web;
 
 namespace DemoCustomModelConverters.Infrastructure.Initialization
 {
@@ -33,8 +39,16 @@ namespace DemoCustomModelConverters.Infrastructure.Initialization
                 config.Default().SetMinimumRoles(string.Empty);
             });
 
-            // Scan for all classes implementing IContentModelConverter. I.e. being able to convert IContent for ContentAPI.
-            ModelConverterLoader.ScanForConverters();
+
+            DependencyResolver.SetResolver(new StructureMapDependencyResolver(context.StructureMap()));
+            context.StructureMap().Configure(c =>
+            {
+                c.For<IDummyInterface>().Use<DummyClass>();
+            });
+
+            // Scan for all classes implementing IContentModelConverter.
+            // This *MUST* be after registrering StructureMap configuration, else activating the converters will crash.
+            ModelConverterLoader.ScanForConverters(context.StructureMap());
         }
 
 

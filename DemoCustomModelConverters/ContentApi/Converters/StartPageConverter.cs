@@ -1,14 +1,24 @@
 ﻿using System;
+using DemoCustomModelConverters.Infrastructure;
 using DemoCustomModelConverters.Models;
+using DemoCustomModelConverters.Models.Baseclasses;
 using DemoCustomModelConverters.Models.Pages.Start;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.ContentApi.Core.Serialization.Models;
 using EPiServer.Core;
+using EPiServer.Web.Routing;
 
 namespace DemoCustomModelConverters.ContentApi.Converters
 {
     public class StartPageConverter : BasePageConverter, IContentModelConverter
     {
+        private IDummyInterface dummyClass;
+
+        public StartPageConverter(IDummyInterface dummyInterface)
+        {
+            dummyClass = dummyInterface;
+        } 
+
         public new Type HandlesType => typeof(StartPage);
 
         public new ContentApiModel TransformContent(IContentModelMapper defaultContentModelMapper, IContent content, bool excludePersonalizedContent = false, string expand = "")
@@ -21,6 +31,9 @@ namespace DemoCustomModelConverters.ContentApi.Converters
 
             // Add any additional properties here, or adjust what the baseclass has added.
             model.Properties.Add("Some key", "Som startpage-specific data");
+
+            // To show that the dummyclass dependency has been injected.
+            model.Properties.Add("Dummyclass", dummyClass.SomeText);
 
             return model;
         }
