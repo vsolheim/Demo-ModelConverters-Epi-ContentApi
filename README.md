@@ -13,6 +13,10 @@ It uses the regular ContentDeliveryApi's `IContentModelMapper` to do the initial
 * Afterwards the resulting ContentApiModel is sent to the client as usual.
 
 ---
+The project supports dependency injection with StructureMap as the IoC tool.
+If you wish to use another tool, or no injection, the basic code is on the branch `Basic_without_dependency_injection`.
+
+---
 
 ## Notable files
 
