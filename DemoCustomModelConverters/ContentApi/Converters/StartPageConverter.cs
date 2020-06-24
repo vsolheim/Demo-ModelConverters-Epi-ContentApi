@@ -3,6 +3,7 @@ using DemoCustomModelConverters.Infrastructure;
 using DemoCustomModelConverters.Models;
 using DemoCustomModelConverters.Models.Baseclasses;
 using DemoCustomModelConverters.Models.Pages.Start;
+using EPiServer;
 using EPiServer.ContentApi.Core.Serialization;
 using EPiServer.ContentApi.Core.Serialization.Models;
 using EPiServer.Core;
@@ -13,10 +14,12 @@ namespace DemoCustomModelConverters.ContentApi.Converters
     public class StartPageConverter : BasePageConverter, IContentModelConverter
     {
         private IDummyInterface dummyClass;
+        private IContentLoader _contentLoader;
 
-        public StartPageConverter(IDummyInterface dummyInterface)
+        public StartPageConverter(IDummyInterface dummyInterface, IContentLoader contentLoader)
         {
             dummyClass = dummyInterface;
+            _contentLoader = contentLoader;
         } 
 
         public new Type HandlesType => typeof(StartPage);

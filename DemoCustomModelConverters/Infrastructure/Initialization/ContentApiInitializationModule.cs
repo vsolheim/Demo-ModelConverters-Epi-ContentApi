@@ -46,9 +46,10 @@ namespace DemoCustomModelConverters.Infrastructure.Initialization
                 c.For<IDummyInterface>().Use<DummyClass>();
             });
 
-            // Scan for all classes implementing IContentModelConverter.
-            // This *MUST* be after registrering StructureMap configuration, else activating the converters will crash.
-            ModelConverterLoader.ScanForConverters(context.StructureMap());
+            // Give ModelConverterLoader a reference to the Structuremap container so it can create converters with dependency injection later.
+            // This is really bad, but it's the only way I've found so far that lets you use dependency injection of EPiServer-classes. This is because those dependencies aren't set until later in the configuration proces.
+            // It doesn't have any consequences that I'm able to find though, as it never changes anything in the container.
+            ModelConverterLoader.SetContainer(context.StructureMap());
         }
 
 
