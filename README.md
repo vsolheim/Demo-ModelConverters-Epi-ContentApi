@@ -20,7 +20,8 @@ If you wish to use another tool, or no injection, the basic code is on the branc
 
 ## Notable files
 
-* [IContentModelConverter](/DemoCustomModelConverters.Models/IContentModelConverter.cs) : identifies the converters to be discovered during startup. **It is very important that this interface is in another project in the solution than the converters, else the assembly scanning won't work.** I'm not entirely sure of the reason, but it seems to be due to different Type.Module.FullyQualifiedAssemblyName. If you have a better explanation, please do tell.
+* [IContentModelConverter](/DemoCustomModelConverters.Models/IContentModelConverter.cs) : identifies the converters to be discovered during startup. 
+If you decide to use the basic version without dependency injection, it is very important that this interface is in another project in the solution than the converters, else the assembly scanning won't work. I'm not entirely sure of the reason, but it seems to be due to different Type.Module.FullyQualifiedAssemblyName. If you have a better explanation, please do tell.
 
 * [ExtendedContentModelMapper.cs](/DemoCustomModelConverters/ContentApi/ExtendedContentModelMapper.cs) : Intercepts the IContent transformation. File is mostly as in EPiServer's own Music Festival demo.
 
